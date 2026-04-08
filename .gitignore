@@ -29,3 +29,6 @@ obj/
 *.bak
 *.log
 
+*.json
+*.csv
+
