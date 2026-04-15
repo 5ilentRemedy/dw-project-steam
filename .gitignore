@@ -31,4 +31,5 @@ obj/
 
 *.json
 *.csv
+*xlsx
 
