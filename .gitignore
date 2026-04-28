@@ -33,3 +33,6 @@ obj/
 *.csv
 *xlsx
 05_sync_to_elastic.py
+
+# ignore all old scripts
+old_scripts/
