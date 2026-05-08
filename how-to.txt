@@ -1,0 +1,2 @@
+Launch each script separately from 01 to 04.
+05 must be launched separately via command "streamlit run 05_dashboard_streamlit.py"
