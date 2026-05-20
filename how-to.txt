@@ -1,2 +1,9 @@
-Launch each script separately from 01 to 04.
-05 must be launched separately via command "streamlit run 05_dashboard_streamlit.py"
+Spring Boot pipeline:
+1. python scripts/01_download_dataset.py
+2. python scripts/02_prepare_data_sources.py
+3. python scripts/03_load_initial_to_sql.py
+4. Run sql/01_star_schema.sql in SQL Server, then EXEC dbo.usp_RebuildSteamWarehouse;
+5. Later update: python scripts/04_load_update_to_sql.py
+6. Dashboard: cd dashboard-springboot; set STEAM_SQL_PASSWORD; mvn spring-boot:run
+
+Old Python Streamlit files are archived in python_streamlit/.

@@ -18,7 +18,8 @@ def load_to_sql():
 
     # --- KONFIGURACJA BAZY DANYCH ---
     db_user = 'dashuser'
-    db_server = 'NORMANDY\\SQLEXPRESS' # <-- Zmień, jeśli instancja nazywa się inaczej
+    db_server = 'NORMANDY\\SQLEXPRESS01'
+    #db_server = 'PERSEVERANCE\\SQLEXPRESS01'
     db_name = 'db_dw_project_steam'
     table_name = 'stg_SteamGames'
 

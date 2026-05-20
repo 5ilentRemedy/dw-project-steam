@@ -1,0 +1,9 @@
+com\atlantis\steamdashboard\DashboardFilter.class
+com\atlantis\steamdashboard\SteamDashboardService.class
+com\atlantis\steamdashboard\DashboardController.class
+com\atlantis\steamdashboard\DashboardOptions.class
+com\atlantis\steamdashboard\DashboardView.class
+com\atlantis\steamdashboard\SteamDashboardService$SqlFilter.class
+com\atlantis\steamdashboard\DashboardMetric.class
+com\atlantis\steamdashboard\SteamDashboardApplication.class
+com\atlantis\steamdashboard\ChartPoint.class

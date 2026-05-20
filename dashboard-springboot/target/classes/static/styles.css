@@ -1,0 +1,160 @@
+:root {
+    color-scheme: light;
+    font-family: Inter, Segoe UI, Arial, sans-serif;
+    color: #172033;
+    background: #f6f8fb;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 300px 1fr;
+}
+
+.sidebar {
+    min-height: 100vh;
+    padding: 24px;
+    background: #ffffff;
+    border-right: 1px solid #dbe3ef;
+}
+
+.sidebar h1 {
+    margin: 0 0 24px;
+    font-size: 24px;
+    letter-spacing: 0;
+}
+
+.filters {
+    display: grid;
+    gap: 16px;
+}
+
+label {
+    display: grid;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #40516d;
+}
+
+select {
+    width: 100%;
+    border: 1px solid #cbd6e2;
+    border-radius: 8px;
+    padding: 8px;
+    background: #fbfdff;
+    color: #172033;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+button,
+.filter-actions a {
+    border: 0;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+}
+
+.filter-actions a {
+    color: #2563eb;
+    background: #edf4ff;
+}
+
+.content {
+    padding: 28px;
+}
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(140px, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.metrics article,
+.chart-panel {
+    background: white;
+    border: 1px solid #dbe3ef;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(23, 32, 51, 0.05);
+}
+
+.metrics article {
+    padding: 18px;
+}
+
+.metrics span {
+    display: block;
+    margin-bottom: 8px;
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.metrics strong {
+    font-size: 28px;
+    letter-spacing: 0;
+}
+
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(280px, 1fr));
+    gap: 16px;
+}
+
+.chart-panel {
+    min-height: 360px;
+    padding: 18px;
+}
+
+.chart-panel.wide {
+    grid-column: span 2;
+}
+
+.chart-panel h2 {
+    margin: 0 0 14px;
+    font-size: 18px;
+}
+
+canvas {
+    width: 100%;
+    height: 290px;
+}
+
+@media (max-width: 980px) {
+    body {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        min-height: auto;
+        border-right: 0;
+        border-bottom: 1px solid #dbe3ef;
+    }
+
+    .metrics,
+    .chart-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-panel.wide {
+        grid-column: span 1;
+    }
+}
+

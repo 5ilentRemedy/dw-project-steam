@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Steam Warehouse Dashboard</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<aside class="sidebar">
+    <h1>Steam Warehouse</h1>
+    <form method="get" class="filters">
+        <label>
+            Release years
+            <select name="years" multiple size="8">
+                <option th:each="year : ${view.options.years}" th:value="${year}" th:text="${year}"
+                        th:selected="${filter.years != null and filter.years.contains(year)}"></option>
+            </select>
+        </label>
+
+        <label>
+            Platforms
+            <select name="platforms" multiple size="5">
+                <option th:each="platform : ${view.options.platforms}" th:value="${platform}" th:text="${platform}"
+                        th:selected="${filter.platforms != null and filter.platforms.contains(platform)}"></option>
+            </select>
+        </label>
+
+        <label>
+            Age category
+            <select name="ages" multiple size="4">
+                <option th:each="age : ${view.options.ages}" th:value="${age}" th:text="${age}"
+                        th:selected="${filter.ages != null and filter.ages.contains(age)}"></option>
+            </select>
+        </label>
+
+        <label>
+            Support level
+            <select name="support" multiple size="4">
+                <option th:each="item : ${view.options.support}" th:value="${item}" th:text="${item}"
+                        th:selected="${filter.support != null and filter.support.contains(item)}"></option>
+            </select>
+        </label>
+
+        <label>
+            Achievements
+            <select name="achievements" multiple size="4">
+                <option th:each="item : ${view.options.achievements}" th:value="${item}" th:text="${item}"
+                        th:selected="${filter.achievements != null and filter.achievements.contains(item)}"></option>
+            </select>
+        </label>
+
+        <div class="filter-actions">
+            <button type="submit">Apply</button>
+            <a href="/">Reset</a>
+        </div>
+    </form>
+</aside>
+
+<main class="content">
+    <section class="metrics">
+        <article>
+            <span>Games</span>
+            <strong th:text="${#numbers.formatInteger(view.metrics.gameCount, 0, 'COMMA')}">0</strong>
+        </article>
+        <article>
+            <span>Average price</span>
+            <strong th:text="${'$' + #numbers.formatDecimal(view.metrics.averagePrice, 1, 2)}">$0.00</strong>
+        </article>
+        <article>
+            <span>Average Metascore</span>
+            <strong th:text="${#numbers.formatDecimal(view.metrics.averageMetacritic, 1, 1)}">0.0</strong>
+        </article>
+        <article>
+            <span>Peak CCU total</span>
+            <strong th:text="${#numbers.formatInteger(view.metrics.peakCcu, 0, 'COMMA')}">0</strong>
+        </article>
+    </section>
+
+    <section class="chart-grid">
+        <article class="chart-panel wide">
+            <h2>Release Trend</h2>
+            <canvas id="trendChart"></canvas>
+        </article>
+        <article class="chart-panel">
+            <h2>Top Genres</h2>
+            <canvas id="genresChart"></canvas>
+        </article>
+        <article class="chart-panel">
+            <h2>Age Categories</h2>
+            <canvas id="ageChart"></canvas>
+        </article>
+        <article class="chart-panel">
+            <h2>Platforms</h2>
+            <canvas id="platformChart"></canvas>
+        </article>
+        <article class="chart-panel">
+            <h2>Support Levels</h2>
+            <canvas id="supportChart"></canvas>
+        </article>
+    </section>
+</main>
+
+<script th:inline="javascript">
+    const trendData = JSON.parse(/*[[${trendJson}]]*/ "[]");
+    const genresData = JSON.parse(/*[[${genresJson}]]*/ "[]");
+    const ageData = JSON.parse(/*[[${ageJson}]]*/ "[]");
+    const platformData = JSON.parse(/*[[${platformJson}]]*/ "[]");
+    const supportData = JSON.parse(/*[[${supportJson}]]*/ "[]");
+
+    function labels(points) {
+        return points.map(point => point.label);
+    }
+
+    function values(points) {
+        return points.map(point => point.value);
+    }
+
+    function chart(canvasId, type, points, colors) {
+        new Chart(document.getElementById(canvasId), {
+            type,
+            data: {
+                labels: labels(points),
+                datasets: [{
+                    data: values(points),
+                    borderColor: colors[0],
+                    backgroundColor: colors,
+                    tension: 0.25,
+                    fill: type === "line"
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: type === "doughnut" } },
+                scales: type === "doughnut" ? {} : {
+                    x: { grid: { color: "#e6edf3" } },
+                    y: { beginAtZero: true, grid: { color: "#e6edf3" } }
+                }
+            }
+        });
+    }
+
+    chart("trendChart", "line", trendData, ["#2563eb", "rgba(37, 99, 235, 0.18)"]);
+    chart("genresChart", "bar", genresData, ["#0f766e", "#14b8a6", "#5eead4", "#99f6e4"]);
+    chart("ageChart", "doughnut", ageData, ["#7c3aed", "#c026d3", "#db2777", "#f97316"]);
+    chart("platformChart", "bar", platformData, ["#1d4ed8", "#0891b2", "#059669", "#ca8a04"]);
+    chart("supportChart", "bar", supportData, ["#334155", "#64748b", "#94a3b8"]);
+</script>
+</body>
+</html>
+
