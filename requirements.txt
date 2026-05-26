@@ -1,0 +1,6 @@
+kagglehub
+numpy
+pandas
+plotly
+pyodbc
+streamlit

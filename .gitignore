@@ -28,4 +28,7 @@ obj/
 # Backup files
 *.bak
 *.log
+*.csv
+*.json
+*.pyc
 
