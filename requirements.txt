@@ -1,4 +1,4 @@
-kagglehub
+kagglehub==0.4.3
 numpy
 pandas
 plotly
