@@ -1,4 +1,5 @@
 kagglehub==0.4.3
+anyio>=4,<5
 numpy
 pandas
 plotly
