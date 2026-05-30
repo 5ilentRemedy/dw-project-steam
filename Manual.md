@@ -62,7 +62,6 @@ Warstwa Frontendowa (Prezentacja): Reprezentowana przez responsywny interfejs u�
 🚀 Instrukcja szybkiego uruchomienia projektu do weryfikacji
 Aby udowodnić działanie całego stosu technologicznego (od punktu 3.0 do 5.0), wystarczy odpalić sekwencyjnie skrypty w konsoli PowerShell:
 
-PowerShell
 ## 1. Konfiguracja środowiska (opcjonalnie)
 python 00_setup_venv.py
 .\.venv\Scripts\Activate.ps1
