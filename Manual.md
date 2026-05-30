@@ -63,22 +63,22 @@ Warstwa Frontendowa (Prezentacja): Reprezentowana przez responsywny interfejs u�
 Aby udowodnić działanie całego stosu technologicznego (od punktu 3.0 do 5.0), wystarczy odpalić sekwencyjnie skrypty w konsoli PowerShell:
 
 PowerShell
-# 1. Konfiguracja środowiska (opcjonalnie)
+## 1. Konfiguracja środowiska (opcjonalnie)
 python 00_setup_venv.py
 .\.venv\Scripts\Activate.ps1
 
-# 2. Test połączenia z lokalnym MS SQL
+## 2. Test połączenia z lokalnym MS SQL
 python 00_test_mssql_connection.py
 
-# 3. Proces ETL (Ocena 3.5)
+## 3. Proces ETL (Ocena 3.5)
 python 01_download_from_kagglehub.py
 python 02_standardize_and_split_data.py
 
-# 4. Ładowanie i hurtownia (Ocena 3.0)
+## 4. Ładowanie i hurtownia (Ocena 3.0)
 python 03_load_initial_bulk_to_mssql.py
 python 04_load_update_to_mssql.py
 
-# 5. Uruchomienie Frontend / Dashboard (Ocena 4.0 i 5.0)
+## 5. Uruchomienie Frontend / Dashboard (Ocena 4.0 i 5.0)
 python 06_run_dashboard.py
 
 # lub bezpośrednio:
