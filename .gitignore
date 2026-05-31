@@ -31,4 +31,6 @@ obj/
 *.csv
 *.json
 *.pyc
+*.venv
+
 
