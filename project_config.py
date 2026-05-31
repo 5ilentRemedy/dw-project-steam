@@ -9,7 +9,7 @@ SQL_DIR = PROJECT_ROOT / "sql"
 
 KAGGLE_DATASET = os.getenv("KAGGLE_DATASET", "fronkongames/steam-games-dataset")
 
-SQL_SERVER = os.getenv("STEAM_SQL_SERVER", r"localhost\SQLEXPRESS")
+SQL_SERVER = os.getenv("STEAM_SQL_SERVER", r"localhost\SQLEXPRESS01")
 SQL_DATABASE = os.getenv("STEAM_SQL_DATABASE", "db_dw_project_steam")
 SQL_USER = os.getenv("STEAM_SQL_USER", "dashuser")
 SQL_PASSWORD = os.getenv("STEAM_SQL_PASSWORD")

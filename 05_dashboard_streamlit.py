@@ -6,18 +6,28 @@ import pyodbc
 import streamlit as st
 
 from project_config import SQL_USER, SQL_PASSWORD, needs_sql_password, sql_connection_string
+from logging_config import setup_logging
 
+logger = setup_logging("05_dashboard_streamlit")
+
+logger.info("=" * 80)
+logger.info("DASHBOARD INITIALIZATION")
+logger.info("=" * 80)
 
 st.set_page_config(page_title="Steam Data Warehouse", layout="wide")
+logger.debug("Streamlit page configured")
 
 if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 if "sql_password" not in st.session_state:
     st.session_state.sql_password = SQL_PASSWORD
 
+logger.info("Session state initialized")
+
 
 @st.cache_data(ttl=600)
 def load_data(password):
+    logger.info("Loading data from SQL Server (cache timeout: 10 minutes)")
     query = """
     SELECT
         dg.AppID,
@@ -51,13 +61,21 @@ def load_data(password):
     JOIN dbo.Dim_Publishers dpu ON dpu.PublisherKey = f.PublisherKey
     JOIN dbo.Dim_Language dl ON dl.LanguageKey = f.LanguageKey;
     """
-    with pyodbc.connect(sql_connection_string(password)) as conn:
-        return pd.read_sql(query, conn)
+    logger.debug("Executing data query...")
+    try:
+        with pyodbc.connect(sql_connection_string(password)) as conn:
+            df = pd.read_sql(query, conn)
+        logger.info(f"✓ Data loaded successfully: {len(df):,} rows")
+        return df
+    except Exception as e:
+        logger.error(f"✗ Failed to load data: {e}")
+        raise
 
 
 def apply_filters(df):
     st.sidebar.header("Filters")
     filtered = df.copy()
+    logger.debug(f"Starting filtering on {len(df):,} rows")
 
     years = st.sidebar.multiselect("Release year", sorted(df["Year"].dropna().astype(int).unique(), reverse=True))
     platforms = st.sidebar.multiselect("Platform", sorted(df["PlatformName"].dropna().unique()))
@@ -67,48 +85,69 @@ def apply_filters(df):
     genres = sorted(set(df["GenreList"].fillna("").str.split(", ").explode()) - {""})
     selected_genres = st.sidebar.multiselect("Genre", genres)
 
+    filter_count = 0
     if years:
         filtered = filtered[filtered["Year"].isin(years)]
+        filter_count += 1
+        logger.debug(f"Applied year filter: {len(years)} year(s)")
     if platforms:
         filtered = filtered[filtered["PlatformName"].isin(platforms)]
+        filter_count += 1
+        logger.debug(f"Applied platform filter: {len(platforms)} platform(s)")
     if ages:
         filtered = filtered[filtered["AgeCategory"].isin(ages)]
+        filter_count += 1
+        logger.debug(f"Applied age filter: {len(ages)} category(ies)")
     if support:
         filtered = filtered[filtered["SupportDescription"].isin(support)]
+        filter_count += 1
+        logger.debug(f"Applied support filter: {len(support)} level(s)")
     if achievements:
         filtered = filtered[filtered["AchievementsTier"].isin(achievements)]
+        filter_count += 1
+        logger.debug(f"Applied achievements filter: {len(achievements)} tier(s)")
     if selected_genres:
         filtered = filtered[
             filtered["GenreList"].fillna("").apply(lambda value: any(genre in value for genre in selected_genres))
         ]
+        filter_count += 1
+        logger.debug(f"Applied genre filter: {len(selected_genres)} genre(s)")
 
+    logger.info(f"Filters applied: {filter_count} active filter(s) | Result: {len(filtered):,} rows")
     return filtered
 
 
 def main():
     st.title("Steam Data Warehouse Dashboard")
+    logger.info("Dashboard UI initialized")
 
     if needs_sql_password() and not st.session_state.authenticated:
+        logger.info("Authentication required and user not authenticated")
         with st.sidebar.form("login_form"):
             password = st.text_input(f"Password for {SQL_USER}", type="password")
             submitted = st.form_submit_button("Login")
 
         if not submitted:
             st.info("Enter SQL Server password in the sidebar.")
+            logger.debug("Waiting for user to submit login form")
             return
 
         try:
+            logger.info(f"Attempting authentication for user: {SQL_USER}")
             load_data.clear()
             load_data(password)
             st.session_state.sql_password = password
             st.session_state.authenticated = True
+            logger.info("✓ Authentication successful")
             st.rerun()
         except Exception as error:
+            logger.error(f"✗ Authentication failed: {error}")
             st.error(f"Could not connect to SQL Server: {error}")
             return
 
     if needs_sql_password() and st.session_state.authenticated:
         if st.sidebar.button("Logout"):
+            logger.info("User clicked logout")
             st.session_state.authenticated = False
             st.session_state.sql_password = None
             load_data.clear()
@@ -117,14 +156,19 @@ def main():
     password = st.session_state.sql_password if needs_sql_password() else None
 
     try:
+        logger.info("Loading data for dashboard display...")
         df = load_data(password)
     except Exception as error:
+        logger.error(f"✗ Could not load data from SQL Server: {error}")
         st.error(f"Could not load data from SQL Server: {error}")
         return
 
+    logger.info(f"Applying user filters...")
     filtered = apply_filters(df)
     unique_games = filtered.drop_duplicates("AppID")
+    logger.info(f"Data ready for display: {len(unique_games):,} unique games")
 
+    logger.debug("Rendering KPI metrics...")
     kpi1, kpi2, kpi3, kpi4 = st.columns(4)
     kpi1.metric("Games", f"{unique_games['AppID'].nunique():,}")
     kpi2.metric("Average price", f"${unique_games['Price'].mean():.2f}" if len(unique_games) else "$0.00")
@@ -134,6 +178,7 @@ def main():
 
     st.divider()
 
+    logger.debug("Rendering visualization charts...")
     col1, col2 = st.columns(2)
     with col1:
         trend = unique_games.dropna(subset=["Year"]).groupby("Year")["AppID"].nunique().reset_index(name="Games")
@@ -172,6 +217,8 @@ def main():
             px.scatter(score_price, x="Price", y="MetacriticScore", size="PeakCCU", hover_name="Name"),
             use_container_width=True,
         )
+    
+    logger.info("✓ Dashboard rendered successfully")
 
 
 if __name__ == "__main__":
